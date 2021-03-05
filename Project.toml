@@ -1,0 +1,4 @@
+name = "Brainfuck"
+uuid = "64099ad2-a977-4c1b-9c56-80e7bbfe392e"
+authors = ["Jonas Gillain <jonasgillain@gmail.com>"]
+version = "0.1.0"
