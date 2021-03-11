@@ -14,7 +14,6 @@ export BFProg, find_matching_bracket, brainfuck, filter_bad_candidate, generate_
 
 
 "find the matching bracket in a string, function needed in the interpreter to find the matching ']' of a '['"
-
 function find_matching_bracket(str::String)
 	counter_open = 1
 	counter_close = 0
@@ -32,7 +31,6 @@ function find_matching_bracket(str::String)
 end
 
 "Brainfuck interpreter, using a @match macro"
-
 function brainfuck(prog::String, input::Array{Int64,1}; memsize::Int64=500, ticks_lim::Int64=10000)
 	
     out = Array{Int64,1}()
@@ -96,7 +94,6 @@ function brainfuck(prog::String; memsize::Int64=500, ticks_lim::Int64=10000)
 end
 
 "function filtering bad candidates for a brainfuck program on basis of their code. this function asserts brackets matching"
-
 function filter_bad_candidate(prog::String)
     
     for i in 1:length(collect(prog))
@@ -119,7 +116,6 @@ end
 	
 	
 "random individuals generation, programs (individuals) are stored as strings"
-
 function generate_rand_prog(max_size::Int64)
 	symbols = ['>','<','+','-','.',',','[',']']
 	
@@ -140,7 +136,6 @@ function generate_rand_prog(max_size::Int64)
 end
 
 "struct for the usage of brainfuck programs in a genetic algorithm, storing the program and its fitness"
-
 mutable struct BFProg
 	program
 	fitness::Int64
