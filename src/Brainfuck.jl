@@ -9,7 +9,9 @@ module Brainfuck
 
 using Match
 
-export find_matching_bracket, brainfuck, filter_bad_candidate, generate_rand_prog
+export BFProg, find_matching_bracket, brainfuck, filter_bad_candidate, generate_rand_prog
+
+
 
 "find the matching bracket in a string, function needed in the interpreter to find the matching ']' of a '['"
 
@@ -134,6 +136,21 @@ function generate_rand_prog(max_size::Int64)
 		if state == "good"
 			return join(code)
 		end
+	end
+end
+
+"struct for the usage of brainfuck programs in a genetic algorithm, storing the program and its fitness"
+
+mutable struct BFProg
+	program
+	fitness::Int64
+	
+	function BFProg(maxProgSize::Int64)
+		return new(generate_rand_prog(maxProgSize),10^10)
+	end
+	
+	function BFProg(program,fitness::Int64)
+		return new(program,fitness)
 	end
 end
 
