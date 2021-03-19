@@ -30,6 +30,22 @@ function find_matching_bracket(str::String)
 	end
 end
 
+function find_matching_bracket_reverse(str::String)
+	counter_close = 1
+	counter_open = 0
+	for i in reverse(1:length(str))
+		if str[i] == '['
+			counter_open += 1
+		elseif str[i] == ']'
+			counter_close += 1
+		end
+		
+		if counter_open==counter_close
+			return i
+		end
+	end
+end
+
 "Brainfuck interpreter, using a @match macro"
 function brainfuck(prog::String, input::Array{Int64,1}; memsize::Int64=500, ticks_lim::Int64=10000)
 	
