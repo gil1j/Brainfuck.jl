@@ -9,7 +9,7 @@ module Brainfuck
 
 using Match
 
-export BFProg, find_matching_bracket, brainfuck, filter_bad_candidate, generate_rand_prog
+export BFProg, find_matching_bracket, brainfuck, filter_bad_candidate, generate_rand_prog, purify_code
 
 
 
@@ -163,6 +163,48 @@ mutable struct BFProg
 	function BFProg(program,fitness::Int64)
 		return new(program,fitness)
 	end
+end
+
+function filter_code(bf_prog::String)
+	pure_bf = bf_prog
+	pure_bf = replace(pure_bf,"+-"=>"")
+	pure_bf = replace(pure_bf,"-+"=>"")
+	pure_bf = replace(pure_bf,"<>"=>"")
+	pure_bf = replace(pure_bf,"><"=>"")
+	return pure_bf
+end
+
+"function to eliminate useless characters in a brainfuck program"
+function purify_code(bf_prog::String)
+	global old = ""
+	global new1 = bf_prog
+	while new1 != old
+		global new1
+		global old
+		old = new1
+		new1 = filter_code(old)
+	end
+	indexToDelete = Int64[]
+	for i in 1:length(new1)
+		if new1[i] == '['
+			if find_matching_bracket(new1[i+1:end]) == nothing
+				append!(indexToDelete,[i])
+			end
+		end
+	end
+	
+	for i in 1:length(new1)
+		if new1[i] == ']'
+			if i == 1
+				append!(indexToDelete,[i])
+			elseif find_matching_bracket_reverse(new1[1:i-1]) == nothing
+				append!(indexToDelete,[i])
+			end
+		end
+	end
+	new1 = collect(new1)	
+	deleteat!(new1,indexToDelete)
+	return join(new1)
 end
 
 end	
