@@ -203,7 +203,7 @@ function purify_code(bf_prog::String)
 		end
 	end
 	new1 = collect(new1)	
-	deleteat!(new1,indexToDelete)
+	deleteat!(new1,sort(indexToDelete))
 	return join(new1)
 end
 
