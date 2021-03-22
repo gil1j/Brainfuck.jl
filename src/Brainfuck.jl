@@ -9,7 +9,7 @@ module Brainfuck
 
 using Match
 
-export BFProg, find_matching_bracket, brainfuck, filter_bad_candidate, generate_rand_prog, purify_code
+export BFProg, find_matching_bracket, find_matching_bracket_reverse, brainfuck, filter_bad_candidate, generate_rand_prog, purify_code
 
 
 
@@ -49,60 +49,63 @@ end
 "Brainfuck interpreter, using a @match macro"
 function brainfuck(prog::String, input::Array{Int64,1}; memsize::Int64=500, ticks_lim::Int64=10000)
 	
-    out = Array{Int64,1}()
+	out = Array{Int64,1}()
     
-    # Read program and filter symbols
-    symbols = ['>','<','+','-','.',',','[',']']
-    code = filter(x -> in(x, symbols), prog)
-    
-    # Memory of the program
-    memory = zeros(Int64, memsize) # Memory in Int64
+	# Read program and filter symbols
+	symbols = ['>','<','+','-','.',',','[',']']
+	code = filter(x -> in(x, symbols), prog)
 
-    # Stack for loops
-    stack = Array{Int64,1}()
-    ptr = 1                 # Memory pointer
-    instr = 1               # Instruction pointer
+	# Memory of the program
+	memory = zeros(Int64, memsize) # Memory in Int64
+
+	# Stack for loops
+	stack = Array{Int64,1}()
+	ptr = 1                 # Memory pointer
+	instr = 1               # Instruction pointer
 	
-	ticks = 0 # ticks counter for timeout (and fitness calculation in the future ???)
+	ticks = 0 # ticks counter for timeout and fitness calculation
 
-    # Run the program
-    while instr <= length(code) && ticks <= ticks_lim
-        if ptr > memsize
-            ptr = ptr - memsize
-        end
-        if ptr <= 0
-            ptr = ptr + memsize
-        end
-        @match code[instr] begin
-            '>' => (ptr += 1)
-            '<' => (ptr -= 1)
-            '+' => (memory[ptr] += 1)
-            '-' => (memory[ptr] -= 1)
-            '.' => push!(out,memory[ptr]) # Decimal OUTPUT (Int64)
-            ',' => (if length(input) != 0
-						memory[ptr] = pop!(input)
-					end)
-            '[' => (if memory[ptr] == 0
-						if find_matching_bracket(code[instr+1:end]) != nothing
-							instr += find_matching_bracket(code[instr+1:end])
-						end
-                	else
-                   		push!(stack, instr)
-                    end)
-            ']' => (if memory[ptr] != 0
-						if length(stack) != 0
-                        	instr = pop!(stack) - 1
-						end
-                    else
-						if length(stack) != 0
-                        	pop!(stack)
-						end
-                    end)      
-        end
-        instr += 1
+	# Run the program
+	while instr <= length(code) && ticks <= ticks_lim
+		# Wrapping the memory
+		if ptr > memsize
+			ptr = ptr - memsize
+		end
+		if ptr <= 0
+			ptr = ptr + memsize
+		end
+		
+		# Instruction matching
+		@match code[instr] begin
+			'>' => (ptr += 1)
+			'<' => (ptr -= 1)
+			'+' => (memory[ptr] += 1)
+			'-' => (memory[ptr] -= 1)
+			'.' => push!(out,memory[ptr]) # Decimal OUTPUT (Int64)
+			',' => (if length(input) != 0
+					memory[ptr] = pop!(input)
+				end)
+			'[' => (if memory[ptr] == 0
+					if find_matching_bracket(code[instr+1:end]) != nothing
+						instr += find_matching_bracket(code[instr+1:end])
+					end
+				else
+					push!(stack, instr)
+				end)
+			']' => (if memory[ptr] != 0
+					if length(stack) != 0
+						instr = pop!(stack) - 1
+					end
+				else
+					if length(stack) != 0
+						pop!(stack)
+					end
+				end)      
+		end
+		instr += 1
 		ticks += 1
-    end
-    return out,ticks
+	end
+	return out,ticks
 end
 
 function brainfuck(prog::String; memsize::Int64=500, ticks_lim::Int64=10000)
@@ -111,23 +114,23 @@ end
 
 "function filtering bad candidates for a brainfuck program on basis of their code. this function asserts brackets matching"
 function filter_bad_candidate(prog::String)
-    
-    for i in 1:length(collect(prog))
-        if length(findall(collect(prog[1:i]) .== ']')) > length(findall(collect(prog[1:i]) .== '['))
-            return "bad"
-        end
-    end
-    
+
+	for i in 1:length(collect(prog))
+		if length(findall(collect(prog[1:i]) .== ']')) > length(findall(collect(prog[1:i]) .== '['))
+			return "bad"
+		end
+	end
+
 	for i in 1:length(collect(reverse(prog)))
-        if length(findall(collect(reverse(prog)[1:i]) .== '[')) > length(findall(collect(reverse(prog)[1:i]) .== ']'))
-            return "bad"
-        end
-    end
-		
+		if length(findall(collect(reverse(prog)[1:i]) .== '[')) > length(findall(collect(reverse(prog)[1:i]) .== ']'))
+			return "bad"
+		end
+	end
+
 	return "good"
 
-    #TBC
-    
+	#TBC
+
 end
 	
 	
