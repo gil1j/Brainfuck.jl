@@ -2,3 +2,6 @@ name = "Brainfuck"
 uuid = "64099ad2-a977-4c1b-9c56-80e7bbfe392e"
 authors = ["Jonas Gillain <jonasgillain@gmail.com>"]
 version = "0.1.0"
+
+[deps]
+Match = "7eb4fadd-790c-5f42-8a69-bfa0b872bfbf"
