@@ -49,7 +49,7 @@ end
 "Brainfuck interpreter, using a @match macro"
 function brainfuck(prog::String, input::Array{Int64,1}; memsize::Int64=500, ticks_lim::Int64=10000)
 	
-	out = Array{Int64,1}()
+	out = UInt8[]
     
 	# Read program and filter symbols
 	symbols = ['>','<','+','-','.',',','[',']']
@@ -59,7 +59,7 @@ function brainfuck(prog::String, input::Array{Int64,1}; memsize::Int64=500, tick
 	memory = zeros(Int64, memsize) # Memory in Int64
 
 	# Stack for loops
-	stack = Array{Int64,1}()
+	stack = Int64[]
 	ptr = 1                 # Memory pointer
 	instr = 1               # Instruction pointer
 	
@@ -79,8 +79,16 @@ function brainfuck(prog::String, input::Array{Int64,1}; memsize::Int64=500, tick
 		@match code[instr] begin
 			'>' => (ptr += 1)
 			'<' => (ptr -= 1)
-			'+' => (memory[ptr] += 1)
-			'-' => (memory[ptr] -= 1)
+			'+' => (if memory[ptr] + 1 < 256
+					memory[ptr] += 1
+				else
+					memory[ptr] = 0
+				end)
+			'-' => (if memory[ptr] - 1 >= 0
+					memory[ptr] -= 1
+				else
+					memory[ptr] = 255
+				end)
 			'.' => push!(out,memory[ptr]) # Decimal OUTPUT (Int64)
 			',' => (if length(input) != 0
 					memory[ptr] = pop!(input)
