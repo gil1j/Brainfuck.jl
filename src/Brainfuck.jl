@@ -84,6 +84,8 @@ function brainfuck(prog::String, input::Array{Int64,1}; memsize::Int64=500, tick
 			'.' => push!(out,memory[ptr]) # Decimal OUTPUT (Int64)
 			',' => (if length(input) != 0
 					memory[ptr] = pop!(input)
+				else
+					memory[ptr] = 0
 				end)
 			'[' => (if memory[ptr] == 0
 					if find_matching_bracket(code[instr+1:end]) != nothing
