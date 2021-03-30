@@ -148,20 +148,10 @@ end
 function generate_rand_prog(max_size::Int64)
 	symbols = ['>','<','+','-','.',',','[',']']
 	
-	state = "bad"
+	size = rand(5:max_size)
+	code = rand(symbols,size)
 	
-	while state == "bad"
-		size = rand(5:max_size)
-		code = Array{Char,1}(undef,size)
-		for i in 1:size
-			code[i] = rand(symbols)
-		end
-		
-		state = filter_bad_candidate(join(code))
-		if state == "good"
-			return join(code)
-		end
-	end
+	return join(code)
 end
 
 "struct for the usage of brainfuck programs in a genetic algorithm, storing the program and its fitness"
