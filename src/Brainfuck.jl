@@ -91,7 +91,7 @@ function brainfuck(prog::String, input::Array{Int64,1}; memsize::Int64=500, tick
 				end)
 			'.' => push!(out,memory[ptr]) # Decimal OUTPUT (Int64)
 			',' => (if length(input) != 0
-					memory[ptr] = pop!(input)
+					memory[ptr] = popfirst!(input)
 				else
 					memory[ptr] = 0
 				end)
