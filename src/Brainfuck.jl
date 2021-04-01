@@ -47,7 +47,7 @@ function find_matching_bracket_reverse(str::String)
 end
 
 "Brainfuck interpreter, using a @match macro"
-function brainfuck(prog::String, input::Array{Int64,1}; memsize::Int64=500, ticks_lim::Int64=10000)
+function brainfuck(prog::String, input::Array{UInt8,1}; memsize::Int64=500, ticks_lim::Int64=10000)
 	
 	out = UInt8[]
     
@@ -56,7 +56,7 @@ function brainfuck(prog::String, input::Array{Int64,1}; memsize::Int64=500, tick
 	code = filter(x -> in(x, symbols), prog)
 
 	# Memory of the program
-	memory = zeros(Int64, memsize) # Memory in Int64
+	memory = zeros(UInt8, memsize) # Memory in Int64
 
 	# Stack for loops
 	stack = Int64[]
@@ -119,7 +119,7 @@ function brainfuck(prog::String, input::Array{Int64,1}; memsize::Int64=500, tick
 end
 
 function brainfuck(prog::String; memsize::Int64=500, ticks_lim::Int64=10000)
-	brainfuck(prog, Array{Int64,1}())
+	brainfuck(prog, Array{UInt8,1}())
 end
 
 "function filtering bad candidates for a brainfuck program on basis of their code. this function asserts brackets matching"
